@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#b96f54">
+<title>Мой Акнекутан — дневник курса</title>
+<style>
+:root{--bg:#f6eee7;--paper:#fffaf5;--ink:#49352d;--muted:#8d7468;--terra:#b96f54;--terra2:#8e4e3b;--line:#ead8cc;--soft:#f0dfd3;--green:#687c65}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{max-width:850px;margin:auto;padding:22px 15px 50px}.hero{background:linear-gradient(135deg,#c98265,#a75c45);color:#fff8f1;padding:25px 22px;border-radius:22px;margin-bottom:17px}
+h1{font-size:27px;line-height:1.15;margin:0 0 8px}.hero p{margin:0;color:#fff0e7}.card{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:18px;margin:14px 0;box-shadow:0 5px 18px #70452a0b}
+h2{font-size:19px;margin:0 0 13px}h3{font-size:17px;margin:0}.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.stat{background:#fbf1e9;border-radius:13px;padding:13px}.stat small{display:block;color:var(--muted);font-size:12px}.stat strong{font-size:21px;display:block;margin-top:3px}
+.month{border:1px solid var(--line);border-radius:15px;margin:12px 0;overflow:hidden;background:#fffdf9}.month summary{list-style:none;cursor:pointer;padding:15px;display:flex;justify-content:space-between;align-items:center;gap:12px;background:#fcf4ed}.month summary::-webkit-details-marker{display:none}.month summary:after{content:"＋";color:var(--terra);font-size:20px}.month[open] summary:after{content:"−"}.month-body{padding:15px}.month-top{display:flex;justify-content:space-between;gap:10px;align-items:start}.month-total{font-weight:700;color:var(--terra2);white-space:nowrap}.muted{color:var(--muted);font-size:13px}.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin:13px 0}.fact{background:#f8eee6;border-radius:10px;padding:10px}.fact small{display:block;color:var(--muted);font-size:12px}.fact b{font-size:15px}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);white-space:nowrap}th{color:var(--muted);font-weight:600}.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}label{display:block;font-size:13px;color:var(--muted)}input{width:100%;padding:11px;margin-top:5px;border:1px solid var(--line);border-radius:10px;background:#fffdfb;color:var(--ink);font:inherit}button{border:0;border-radius:12px;padding:12px 16px;background:var(--terra);color:white;font-weight:650;font:inherit;cursor:pointer;margin-top:12px}button.secondary{background:#ead8cc;color:var(--ink)}button.danger{background:#f3e1dc;color:#914b3d}.actions{display:flex;flex-wrap:wrap;gap:8px}.actions button{margin-top:8px}.note{background:#f8eee6;border-left:3px solid var(--terra);padding:12px;border-radius:8px;color:#765d51;font-size:13px}.progress{height:10px;background:#ead8cc;border-radius:20px;overflow:hidden;margin:10px 0}.progress span{display:block;height:100%;background:var(--terra);width:0}.empty{color:var(--muted);font-size:14px;padding:12px 0}.smallbtn{padding:7px 10px;font-size:12px;margin:0}
+@media(max-width:520px){main{padding:14px 11px 35px}.hero{padding:21px 17px}h1{font-size:24px}.formgrid{grid-template-columns:1fr}.month-top{display:block}.month-total{margin-top:5px}.stats{gap:8px}.stat strong{font-size:19px}}
+</style>
+</head>
+<body><main>
+<header class="hero"><h1>Мой дневник Акнекутана</h1><p>Подробный учёт каждого месяца курса — дозировка, дни приёма, пропуски и накопленная сумма.</p></header>
+<section class="card"><h2>Общий прогресс</h2><div class="stats">
+<div class="stat"><small>Принято всего</small><strong id="total">—</strong></div>
+<div class="stat"><small>Накопленная доза</small><strong id="mgkg">—</strong></div>
+<div class="stat"><small>Цель для отслеживания</small><strong id="goal">—</strong></div>
+<div class="stat"><small>Осталось до цели</small><strong id="left">—</strong></div>
+</div><div class="progress"><span id="bar"></span></div><div class="muted" id="progressText"></div></section>
+<section class="card"><h2>Месяцы приёма — подробно</h2><div class="muted">Открой любой месяц, чтобы увидеть расчёт по дням и итог за месяц. Начальные записи можно исправить.</div><div id="months"></div></section>
+<section class="card"><h2>Добавить или изменить месяц</h2>
+<form id="monthForm"><input type="hidden" id="editId">
+<div class="formgrid">
+<label>Название месяца / периода<input id="name" placeholder="Например, месяц 5" required></label>
+<label>Начало периода<input id="start" type="date" required></label>
+<label>Конец периода<input id="end" type="date" required></label>
+<label>Доза в день, мг<input id="dose" type="number" min="0" step="1" placeholder="32" required></label>
+<label>Дней с приёмом<input id="days" type="number" min="0" step="1" placeholder="30" required></label>
+<label>Пропущено, мг<input id="missed" type="number" min="0" step="1" value="0" required></label>
+</div><label style="margin-top:10px">Заметка (необязательно)<input id="note" placeholder="Например: один пропуск 8 мг"></label>
+<div class="actions"><button type="submit" id="saveBtn">Сохранить месяц</button><button type="button" class="secondary" id="cancelBtn" style="display:none">Отмена редактирования</button></div>
+</form></section>
+<section class="card"><h2>Параметры расчёта</h2><div class="formgrid">
+<label>Вес, кг<input id="weight" type="number" min="1" step="0.1" value="43"></label>
+<label>Цель, мг/кг<input id="target" type="number" min="1" step="1" value="150"></label>
+</div><button id="settings">Обновить расчёт</button></section>
+<section class="card"><h2>Резервная копия</h2><div class="actions"><button id="export">Скачать резервную копию</button><button class="secondary" id="importBtn">Загрузить копию</button><input type="file" id="importFile" accept="application/json" hidden></div><p class="muted">Записи сохраняются в браузере этого устройства. Экспортируй копию, если не хочешь потерять историю при очистке браузера.</p></section>
+<p class="note">Калькулятор предназначен только для учёта уже принятой дозы. Цель 150 мг/кг — выбранный ориентир для наблюдения, а не обязательная схема лечения. Не меняй дозу и длительность курса самостоятельно: согласовывай их с дерматологом.</p>
+</main>
+<script>
+const initial=[
+{id:"m1",name:"Месяц 1",start:"2026-08-11",end:"2026-09-10",dose:16,days:31,missed:0,note:"31 день × 16 мг"},
+{id:"m2",name:"Месяц 2",start:"2026-09-11",end:"2026-10-10",dose:24,days:30,missed:0,note:"30 дней × 24 мг"},
+{id:"m3",name:"Месяц 3",start:"2026-10-11",end:"2026-11-09",dose:24,days:30,missed:0,note:"30 дней × 24 мг"},
+{id:"m4",name:"Месяц 4 (по 18 ноября)",start:"2026-11-10",end:"2026-11-18",dose:32,days:9,missed:8,note:"9 дней × 32 мг, минус одна пропущенная капсула 8 мг"}
+];
+let months=JSON.parse(localStorage.getItem("akne_months_v2")||"null")||initial;
+let weight=Number(localStorage.getItem("akne_weight_v2")||43), target=Number(localStorage.getItem("akne_target_v2")||150);
+const $=id=>document.getElementById(id), fmt=n=>new Intl.NumberFormat("ru-RU",{maximumFractionDigits:1}).format(n);
+function amount(m){return Math.max(0,m.dose*m.days-m.missed)}
+function save(){localStorage.setItem("akne_months_v2",JSON.stringify(months));localStorage.setItem("akne_weight_v2",weight);localStorage.setItem("akne_target_v2",target);render()}
+function render(){
+ $("weight").value=weight;$("target").value=target;
+ const total=months.reduce((s,m)=>s+amount(m),0),kg=weight?total/weight:0,goal=weight*target,left=Math.max(0,goal-total);
+ $("total").textContent=fmt(total)+" мг";$("mgkg").textContent=fmt(kg)+" мг/кг";$("goal").textContent=fmt(goal)+" мг";$("left").textContent=fmt(left)+" мг";
+ $("bar").style.width=Math.min(100,goal?total/goal*100:0)+"%";$("progressText").textContent=fmt(goal?total/goal*100:0)+"% от выбранного ориентира";
+ let running=0;
+ $("months").innerHTML=months.map((m,i)=>{let val=amount(m);running+=val;let html=`<details class="month" ${i===months.length-1?'open':''}><summary><div><h3>${esc(m.name)}</h3><div class="muted">${date(m.start)} — ${date(m.end)}</div></div><div class="month-total">${fmt(val)} мг</div></summary><div class="month-body"><div class="facts">
+<div class="fact"><small>Доза за день</small><b>${fmt(m.dose)} мг</b></div><div class="fact"><small>Дней с приёмом</small><b>${m.days}</b></div>
+<div class="fact"><small>Принято до вычета пропусков</small><b>${fmt(m.dose*m.days)} мг</b></div><div class="fact"><small>Пропущено</small><b>${fmt(m.missed)} мг</b></div>
+<div class="fact"><small>Итого за период</small><b>${fmt(val)} мг</b></div><div class="fact"><small>Накопительно после периода</small><b>${fmt(running)} мг</b></div></div>
+${m.note?`<p class="muted">${esc(m.note)}</p>`:""}<div class="table-wrap"><table><thead><tr><th>Показатель</th><th>Расчёт</th><th>Результат</th></tr></thead><tbody><tr><td>Доза за месяц</td><td>${fmt(m.dose)} × ${m.days}</td><td>${fmt(m.dose*m.days)} мг</td></tr><tr><td>Минус пропуски</td><td>${fmt(m.dose*m.days)} − ${fmt(m.missed)}</td><td>${fmt(val)} мг</td></tr><tr><td>Накопленная доза</td><td>Сумма всех периодов до этого</td><td>${fmt(running)} мг</td></tr></tbody></table></div><div class="actions"><button class="smallbtn secondary" onclick="editMonth('${m.id}')">Изменить</button><button class="smallbtn danger" onclick="deleteMonth('${m.id}')">Удалить</button></div></div></details>`;return html}).join("")||'<div class="empty">Пока нет записей. Добавь первый месяц ниже.</div>';
+}
+function date(s){if(!s)return "—";let [y,m,d]=s.split("-");return `${d}.${m}.${y}`}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+$("monthForm").addEventListener("submit",e=>{e.preventDefault();let id=$("editId").value||"m"+Date.now(),obj={id,name:$("name").value,start:$("start").value,end:$("end").value,dose:Number($("dose").value),days:Number($("days").value),missed:Number($("missed").value),note:$("note").value};let idx=months.findIndex(x=>x.id===id);if(idx>=0)months[idx]=obj;else months.push(obj);months.sort((a,b)=>a.start.localeCompare(b.start));resetForm();save()});
+function resetForm(){$("monthForm").reset();$("editId").value="";$("missed").value=0;$("saveBtn").textContent="Сохранить месяц";$("cancelBtn").style.display="none"}
+window.editMonth=id=>{let m=months.find(x=>x.id===id);if(!m)return;$("editId").value=m.id;["name","start","end","dose","days","missed","note"].forEach(k=>$(k).value=m[k]);$("saveBtn").textContent="Сохранить изменения";$("cancelBtn").style.display="inline-block";$("monthForm").scrollIntoView({behavior:"smooth"})};
+window.deleteMonth=id=>{if(confirm("Удалить эту запись месяца?")){months=months.filter(m=>m.id!==id);save()}};
+$("cancelBtn").onclick=resetForm;$("settings").onclick=()=>{weight=Number($("weight").value)||43;target=Number($("target").value)||150;save()};
+$("export").onclick=()=>{let blob=new Blob([JSON.stringify({months,weight,target},null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="dnevnik-aknekutan-backup.json";a.click();URL.revokeObjectURL(a.href)};
+$("importBtn").onclick=()=>$("importFile").click();$("importFile").onchange=async e=>{try{let x=JSON.parse(await e.target.files[0].text());if(!Array.isArray(x.months))throw Error();months=x.months;weight=Number(x.weight)||43;target=Number(x.target)||150;save()}catch{alert("Не удалось прочитать резервную копию")}};
+render();
+</script></body></html>
